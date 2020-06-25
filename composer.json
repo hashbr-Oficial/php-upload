@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Easy upload files.",
     "keywords": ["upload", "php upload files"],
-    "homepage": "http://github.com/offboard/php-upload",
+    "homepage": "http://github.com/brunoribeiro-lab/php-upload",
     "license": "MIT",
     "authors": [
         {
