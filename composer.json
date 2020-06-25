@@ -1,0 +1,23 @@
+{
+    "name": "brunoribeiro-lab/php-upload",
+    "type": "library",
+    "description": "Easy upload files.",
+    "keywords": ["upload", "php upload files"],
+    "homepage": "http://github.com/offboard/php-upload",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bruno Ribeiro",
+            "email": "bruno.espertinho@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "classmap": [
+            "lib/Upload.php",
+            "lib/Upload/ResizeUpload.php"
+        ]
+    }
+}
