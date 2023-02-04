@@ -20,10 +20,10 @@ themselves. To create libraries/packages please read the
     ``` json
     {
         "repositories": [
-     	    {"type": "git", "url": "https://github.com/brunoribeiro-lab/php-upload"}
+     	    {"type": "git", "url": "https://github.com/hashbr-Oficial/php-upload"}
         ], 
         "require": {  
-            "brunoribeiro-lab/php-upload": "dev-master"
+            "hashbr-Oficial/php-upload": "dev-master"
         }
     }
     ```

@@ -1,14 +1,14 @@
 {
-    "name": "brunoribeiro-lab/php-upload",
+    "name": "hashbr-Oficial/php-upload",
     "type": "library",
     "description": "Easy upload files.",
     "keywords": ["upload", "php upload files"],
-    "homepage": "http://github.com/brunoribeiro-lab/php-upload",
+    "homepage": "http://github.com/hashbr-Oficial/php-upload",
     "license": "MIT",
     "authors": [
         {
-            "name": "Bruno Ribeiro",
-            "email": "bruno.espertinho@gmail.com"
+            "name": "HashBR",
+            "email": "contato@hashbr.com"
         }
     ],
     "require": {
