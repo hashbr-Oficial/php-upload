@@ -69,12 +69,20 @@ class ResizeImage {
     private $resizeHeight;
 
     /**
+     * Convert to webp 
+     * 
+     * @var boolean
+     */
+    private $WebP = false;
+
+    /**
      * Class constructor requires to send through the image filename
      *
      * @param string $filename - Filename of the image you want to resize
      */
-    public function __construct($filename) {
+    public function __construct($filename, $WebP = false) {
         if (file_exists($filename)) {
+            $this->WebP = $WebP;
             $this->setImage($filename);
         } else {
             throw new Exception('Image ' . $filename . ' can not be found, try another image.');
@@ -127,32 +135,37 @@ class ResizeImage {
      * @return Saves the image
      */
     public function saveImage($savePath, $imageQuality = "100") {
-        switch ($this->ext) {
-            case 'image/jpg':
-            case 'image/jpeg':
-                // Check PHP supports this file type
-                if (imagetypes() & IMG_JPG) {
-                    imagejpeg($this->newImage, $savePath, $imageQuality);
-                }
-                break;
+        if ($this->WebP && imagetypes() & IMG_WEBP) {
+            print "caiu aqui";
+            $webpPath = $savePath . '.webp';
+            imagewebp($this->newImage, $webpPath, $imageQuality);
+        } else {
+            switch ($this->ext) {
+                case 'image/jpg':
+                case 'image/jpeg':
+                    // Check PHP supports this file type
+                    if (imagetypes() & IMG_JPG) {
+                        imagejpeg($this->newImage, $savePath, $imageQuality);
+                    }
+                    break;
 
-            case 'image/gif':
-                // Check PHP supports this file type
-                if (imagetypes() & IMG_GIF) {
-                    imagegif($this->newImage, $savePath);
-                }
-                break;
+                case 'image/gif':
+                    // Check PHP supports this file type
+                    if (imagetypes() & IMG_GIF) {
+                        imagegif($this->newImage, $savePath);
+                    }
+                    break;
 
-            case 'image/png':
-                $invertScaleQuality = 9 - round(($imageQuality / 100) * 9);
+                case 'image/png':
+                    $invertScaleQuality = 9 - round(($imageQuality / 100) * 9);
 
-                // Check PHP supports this file type
-                if (imagetypes() & IMG_PNG) {
-                    imagepng($this->newImage, $savePath, $invertScaleQuality);
-                }
-                break;
+                    // Check PHP supports this file type
+                    if (imagetypes() & IMG_PNG) {
+                        imagepng($this->newImage, $savePath, $invertScaleQuality);
+                    }
+                    break;
+            }
         }
-
         imagedestroy($this->newImage);
     }
 
