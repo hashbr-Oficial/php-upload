@@ -207,6 +207,22 @@ class Upload {
     );
 
     /**
+     * Convert image to webp
+     * 
+     * @access private
+     * @var bool
+     */
+    private $WebP = false;
+
+    /**
+     * Resize image option
+     * 
+     * @access private
+     * @var bool
+     */
+    private $resize = false;
+
+    /**
      * Magic Metthod
      * 
      * @param string|array $img Image Source
@@ -280,7 +296,7 @@ class Upload {
                 return false;
             }
         } elseif (!is_dir($this->upload_to)) {
-            $this->error =  "Destination directory doesn't exist. Can't carry on a process";
+            $this->error = "Destination directory doesn't exist. Can't carry on a process";
             return false;
         }
 
@@ -320,30 +336,57 @@ class Upload {
                 $this->error = "File upload error (unknown error code)";
         }
 
-
+        if (move_uploaded_file($this->file_src_temp, $path))
+            $this->was_uploaded = true;
 
         // checks if not occurred an error to upload file
         if ($this->was_uploaded) {
-            if (move_uploaded_file($this->file_src_temp, $path)) {
-                $this->final_file_name = $file;
-                // extracts image dimensions 
-                list($w, $h) = getimagesize($path);
-                $this->file_width = $w;
-                $this->file_height = $h;
-
-                // the resize mode is available ?
-                if (isset($this->resize)) {
-                    $resize = new ResizeImage($path);
-                    $resize->resizeTo($this->image_x, $this->image_y, $this->resize_option);
-                    $resize->saveImage($path);
-                }
-                return true;
-            } else {
-                $this->was_uploaded = false;
-                $this->error = 'was not possible to send the file.';
-                return false;
+            $this->final_file_name = $file;
+            // extracts image dimensions 
+            list($w, $h) = getimagesize($path);
+            $this->file_width = $w;
+            $this->file_height = $h;
+            // the resize mode is available ?
+            if ($this->resize) {
+                print $this->WebP;
+                $resize = new ResizeImage($path, $this->WebP);
+                $resize->resizeTo($this->image_x, $this->image_y, $this->resize_option);
+                $resize->saveImage($path);
             }
+
+            // convert to WebP if resize is disabled
+            if (!$this->resize && $this->WebP) {
+                switch ($this->file_src_mime) {
+                    // Image is a JPG
+                    case 'image/jpg':
+                    case 'image/jpeg':
+                        // create a jpeg extension
+                        $image = imagecreatefromjpeg($path);
+                        break;
+                    // Image is a GIF
+                    case 'image/gif':
+                        $image = @imagecreatefromgif($path);
+                        break;
+                    // Image is a PNG
+                    case 'image/png':
+                        $image = @imagecreatefrompng($path);
+                        break;
+                    // Mime type not found
+                    default:
+                        throw new Exception("File is not an image, please use another file type or remove webp param.", 1);
+                }
+                $hash = md5(uniqid(rand(), true));
+                $this->final_file_name = "{$hash}.webp";
+                imagewebp($image, "{$this->upload_to}{$this->final_file_name}", 80);
+                imagedestroy($image);
+                unlink($path); // remove original file
+            }
+            return true;
         }
+
+        $this->was_uploaded = false;
+        $this->error = 'was not possible to send the file.';
+        return false;
     }
 
     /**
@@ -440,6 +483,19 @@ class Upload {
      */
     public function upload_to($path) {
         $this->upload_to = $path;
+        return $this;
+    }
+
+    /**
+     * Set enabled to Convert to WebP format
+     * 
+     * @access public
+     * @param boolean $webp Set true to convert image to WebP, default false
+     * 
+     * @return \Upload
+     */
+    public function convert_to_webp($WebP) {
+        $this->WebP = $WebP;
         return $this;
     }
 
