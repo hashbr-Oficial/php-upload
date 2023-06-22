@@ -369,7 +369,11 @@ class Upload {
                         break;
                     // Image is a PNG
                     case 'image/png':
-                        $image = @imagecreatefrompng($path);
+                        $image = imagecreatefrompng($path);
+                        $tmp = imagecreatetruecolor(imagesx($image), imagesy($image));
+                        imagecopy($tmp, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+                        imagedestroy($image);
+                        $image = $tmp;
                         break;
                     // Mime type not found
                     default:
